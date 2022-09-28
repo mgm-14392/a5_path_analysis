@@ -1,0 +1,12 @@
+#!/bin/bash
+
+for file in hole*.inp;
+do
+ name="${file%.*}"
+ hole < $file > "$name".txt
+ egrep "mid-|sampled" "$name".txt > "$name".tsv
+ sph_process -dotden 15 -color "$name".sph "$name".qpt
+ (echo -e "D" ; echo -e "'$name'.qpt" ; echo -e "'$name'.vmd_plot") | qpt_conv
+ sph_process -sos -dotden 15 -color "$name".sph "$name"_solid_surface.sos
+ sos_triangle -s < "$name"_solid_surface.sos > "$name"_solid_surface.vmd_plot
+done
